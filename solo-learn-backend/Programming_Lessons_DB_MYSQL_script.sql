@@ -53,3 +53,29 @@ CREATE TABLE quizzes (
 );
 
 
+CREATE TABLE leaderboard(
+    lb_id INT PRIMARY KEY,
+    user_id INT,
+    points INT,
+    position INT,
+    last_updated TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+
+);
+
+CREATE TABLE badges(
+    badge_id INT PRIMARY KEY,
+    badge_name VARCHAR(255),
+    badge_description TEXT,
+    image_url VARCHAR(255),
+    requirement TEXT
+
+
+);
+
+
+CREATE TABLE user_badges(
+    user_id INT PRIMARY KEY REFERENCES users(user_id),
+    badge_id INT REFERENCES badges(badge_id),
+    earned_at TIMESTAMP
+);
