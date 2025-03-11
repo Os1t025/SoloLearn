@@ -79,3 +79,27 @@ CREATE TABLE user_badges(
     badge_id INT REFERENCES badges(badge_id),
     earned_at TIMESTAMP
 );
+
+
+
+INSERT INTO courses (course_id, course_name, description, created_at)
+VALUES (
+    1, 
+    'Python for Beginners', 
+    'An introductory course to Python programming.', 
+    NOW()
+);
+
+
+INSERT INTO lessons (course_id, title, content, video_url, created_at)
+VALUES (
+    1,  -- Assuming course_id = 1 is for "Python for Beginners"
+    'Introduction to Python',
+    'Python is a high-level, interpreted programming language known for its simplicity and readability. It is widely used for web development, data analysis, artificial intelligence, and automation. In this lesson, you will learn:\n\n1. What Python is used for.\n2. How to install Python.\n3. Writing your first Python program.\n\n### Writing Your First Python Program\nTo print "Hello, World!" in Python, use the following code:\n\n```python\nprint("Hello, World!")\n```\n\nTry running this in a Python interpreter!',
+    NULL,  -- Optional video URL
+    NOW()
+);
+
+
+
+
