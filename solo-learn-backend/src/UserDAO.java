@@ -1,6 +1,8 @@
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAO {
 
@@ -65,6 +67,30 @@ public class UserDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // Method to retrieve hints by lesson ID (added for your feature)
+    public List<Hint> getHintsByLessonId(String lessonId) {
+        List<Hint> hints = new ArrayList<>();
+        String sql = "SELECT hint_id, lesson_id, hint_text FROM hints WHERE lesson_id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, lessonId);
+            ResultSet resultSet = stmt.executeQuery();
+
+            while (resultSet.next()) {
+                hints.add(new Hint(
+                        resultSet.getInt("hint_id"),
+                        resultSet.getString("lesson_id"),
+                        resultSet.getString("hint_text")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return hints;
     }
 
     // Method to hash passwords using SHA-256

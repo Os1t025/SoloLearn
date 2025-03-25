@@ -1,11 +1,13 @@
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
         UserDAO userDAO = new UserDAO();
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("1. Register\n2. Login\n3. Retrieve User Info");
+        System.out.println("1. Register\n2. Login\n3. Retrieve User Info\n4. View Hints");
         int choice = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
@@ -23,6 +25,7 @@ public class Main {
             } else {
                 System.out.println("Registration failed. Username or email may already exist.");
             }
+
         } else if (choice == 2) { // Login
             System.out.print("Enter Username: ");
             String username = scanner.nextLine();
@@ -35,6 +38,7 @@ public class Main {
             } else {
                 System.out.println("Invalid username or password.");
             }
+
         } else if (choice == 3) { // Retrieve User Info
             System.out.print("Enter Username: ");
             String username = scanner.nextLine();
@@ -47,10 +51,21 @@ public class Main {
             } else {
                 System.out.println("User not found.");
             }
-        } else {
-            System.out.println("Invalid option.");
+
+        } else if (choice == 4) { // View Hints
+            List<Hint> hints = new ArrayList<>();
+            hints.add(new Hint(1, "1", "This is a dummy hint."));
+            hints.add(new Hint(2, "1", "Remember to review your notes."));
+            hints.add(new Hint(3, "2", "You can always ask questions in class."));
+
+            System.out.println("Hints:");
+            for (Hint hint : hints) {
+                System.out.println("- " + hint.getHintText());
+            }
         }
 
         scanner.close();
     }
 }
+
+
