@@ -1,0 +1,34 @@
+{
+  "name": "solo-learn",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "start:backend": "php -S localhost:8000 -t ../backend/src",
+    "dev:fullstack": "concurrently \"npm run start:backend\" \"npm run dev\""
+  },
+  "dependencies": {
+    "framer-motion": "^12.5.0",
+    "next": "13.2.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^9",
+    "eslint-config-next": "13.2.1",
+    "tailwindcss": "^4.0.14",
+    "typescript": "^5",
+    "concurrently": "^8.0.0"
+  }
+}
+
+
+
