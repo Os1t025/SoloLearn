@@ -42,8 +42,34 @@ export default function Levels() {
           SQL
         </motion.button>
       </div>
+
+      {/* Leaderboards & Community Buttons */}
+      <div className="action-buttons">
+        <motion.button className="btn leaderboard-btn" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => router.push("/leaderboard")}>
+          Leaderboard
+        </motion.button>
+
+        <motion.button className="btn community-btn" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => router.push("/community")}>
+          Community
+        </motion.button>
+      </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
