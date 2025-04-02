@@ -91,4 +91,16 @@ body {
     padding: 10px 15px;
   }
 }
-
+.action-buttons {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+}
+.leaderboard-btn, .community-btn {
+  width: 220px;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 16px;
+}
