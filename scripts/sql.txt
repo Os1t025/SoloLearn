@@ -9,4 +9,42 @@ CREATE TABLE IF NOT EXISTS users (
     password VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE user_progress (
+    progress_id INT PRIMARY KEY AUTO_INCREMENT,
+    id INT,
+    lesson_id INT,
+    completed BOOLEAN DEFAULT FALSE,
+    quiz_score INT CHECK (quiz_score BETWEEN 0 AND 100),
+    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+
+
+CREATE TABLE courses (
+    course_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE lessons (
+    lesson_id INT PRIMARY KEY AUTO_INCREMENT,
+    course_id INT NOT NULL,  -- Ensure it matches the data type in courses
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    video_url VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_course FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
+);
+
+CREATE TABLE community_posts (
+    post_id SERIAL PRIMARY KEY,
+    id INT REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 SELECT * FROM users;
