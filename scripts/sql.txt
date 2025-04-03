@@ -46,5 +46,13 @@ CREATE TABLE community_posts (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE levels (
+  level_id INT AUTO_INCREMENT PRIMARY KEY,
+  level_name VARCHAR(100) NOT NULL,
+  description TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
 
 SELECT * FROM users;
