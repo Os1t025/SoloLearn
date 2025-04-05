@@ -20,8 +20,6 @@ CREATE TABLE user_progress (
 );
 
 
-
-
 CREATE TABLE courses (
     course_id INT PRIMARY KEY AUTO_INCREMENT,
     course_name VARCHAR(255) UNIQUE NOT NULL,
@@ -53,6 +51,54 @@ CREATE TABLE levels (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+ALTER TABLE users 
+ADD COLUMN points INT DEFAULT 0,
+ADD COLUMN level INT DEFAULT 1,
+ADD COLUMN role ENUM('User', 'Mentor', 'Leader') DEFAULT 'User';
+
+CREATE TABLE points_log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    points_earned INT,
+    reason VARCHAR(255),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+ALTER TABLE user_progress ADD COLUMN points_awarded INT DEFAULT 0;
+ALTER TABLE levels ADD COLUMN min_points INT NOT NULL;
+
+INSERT INTO levels (level_name, description, min_points) VALUES 
+('Beginner', 'New learner', 0),
+('Intermediate', 'Getting the hang of it', 100),
+('Advanced', 'Mastering the concepts', 500),
+('Expert', 'Highly skilled in coding', 1000);
+
+CREATE TABLE leaderboard (
+    rank_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT UNIQUE,
+    points INT,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+DELIMITER //
+CREATE TRIGGER update_user_level 
+AFTER UPDATE ON users
+FOR EACH ROW
+BEGIN
+    DECLARE new_level INT;
+    
+    SELECT level_id INTO new_level 
+    FROM levels 
+    WHERE NEW.points >= min_points 
+    ORDER BY min_points DESC 
+    LIMIT 1;
+    
+    UPDATE users SET level = new_level WHERE id = NEW.id;
+END;
+//
+DELIMITER ;
 
 
 SELECT * FROM users;
