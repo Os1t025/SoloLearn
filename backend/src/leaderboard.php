@@ -1,6 +1,11 @@
 <?php
 require 'database.php';
-
+/**
+ *  Leaderboard
+ * - Displays top users ranked by their points.
+ * - Can be filtered by time (daily, weekly, all-time) or category.
+ * - Useful for fostering competition, recognition, and motivation among users.
+ */
 $sql = "
     SELECT u.username, u.points, l.level_name
     FROM users u
