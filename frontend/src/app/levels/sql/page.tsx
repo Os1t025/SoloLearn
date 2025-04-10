@@ -1,50 +1,55 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const sqlQuestions = {
-    easy: [
-      {
-        question: "Which SQL clause is used to filter results?",
-        options: ["ORDER BY", "WHERE", "JOIN", "GROUP BY"],
-        answer: "WHERE",
-      },
-    ],
-    medium: [
-      {
-        question: "Which SQL function is used to count the number of rows?",
-        options: ["SUM()", "AVG()", "COUNT()", "TOTAL()"],
-        answer: "COUNT()",
-      },
-    ],
-    hard: [
-      {
-        question: "Which SQL keyword is used to remove duplicates from a query result?",
-        options: ["DELETE", "DISTINCT", "REMOVE", "FILTER"],
-        answer: "DISTINCT",
-      },
-    ],
-  };
-
-export default function sqlQuiz() {
+export default function SqlQuiz() {
   const [level, setLevel] = useState<"easy" | "medium" | "hard" | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
+  const [questions, setQuestions] = useState<any[]>([]); // Store fetched questions
+  const [loading, setLoading] = useState(true); // Loading state
 
   const startQuiz = (difficulty: "easy" | "medium" | "hard") => {
     setLevel(difficulty);
     setCurrentQuestion(0);
     setScore(0);
+    setLoading(true); // Set loading to true when starting the quiz
   };
 
-  const handleAnswer = (answer: string) => {
-    if (answer === sqlQuestions[level!][currentQuestion].answer) {
-      setScore(score + 10);
+  // Fetch questions from the backend based on the selected difficulty level
+  useEffect(() => {
+    if (level) {
+      setLoading(true); // Set loading to true when starting to fetch
+      fetch(`http://localhost:8000/get-questions-sql.php?level=${level}`)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            setQuestions(data); // Set the fetched questions
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching questions:", error);
+        })
+        .finally(() => {
+          setLoading(false); // Set loading to false once the fetch is complete
+        });
     }
-    if (currentQuestion + 1 < sqlQuestions[level!].length) {
-      setCurrentQuestion(currentQuestion + 1);
+  }, [level]); // Run the effect whenever `level` changes
+
+  // Function to handle the answer selection
+  const handleAnswer = (answer: string) => {
+    if (questions[currentQuestion]?.answer === answer) {
+      setScore(score + 10); // Increment score for correct answer
+    }
+
+    if (currentQuestion + 1 < questions.length) {
+      setCurrentQuestion(currentQuestion + 1); // Move to the next question
     } else {
       alert(`Quiz Completed! 🎉 Your Score: ${score + 10}`);
-      setLevel(null);
+      setLevel(null); // Reset quiz after completion
+      setCurrentQuestion(0); // Reset current question index
+      setScore(0); // Reset score
     }
   };
 
@@ -60,16 +65,27 @@ export default function sqlQuiz() {
         </>
       ) : (
         <>
-          <h2>{sqlQuestions[level][currentQuestion].question}</h2>
-          {sqlQuestions[level][currentQuestion].options.map((option, index) => (
-            <button key={index} className="btn" onClick={() => handleAnswer(option)}>
-              {option}
-            </button>
-          ))}
+          {loading ? (
+            <p>Loading questions...</p> // Display a loading message while questions are being fetched
+          ) : (
+            <>
+              {/* Ensure the current question exists */}
+              {questions[currentQuestion] ? (
+                <>
+                  <h2>{questions[currentQuestion].question}</h2>
+                  {questions[currentQuestion]?.options?.map((option: string, index: number) => (
+                    <button key={index} className="btn" onClick={() => handleAnswer(option)}>
+                      {option}
+                    </button>
+                  ))}
+                </>
+              ) : (
+                <p>No questions available.</p> // Fallback if no questions exist
+              )}
+            </>
+          )}
         </>
       )}
     </div>
   );
 }
-
-  
