@@ -1,0 +1,182 @@
+DROP DATABASE IF EXISTS SoloLearn;
+CREATE DATABASE IF NOT EXISTS SoloLearn;
+
+USE SoloLearn;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    points INT DEFAULT 0,          -- This will be used as XP (experience points)
+    level INT DEFAULT 1,           -- Level of the user (based on points)
+    role ENUM('User', 'Mentor', 'Leader') DEFAULT 'User',
+    streak INT DEFAULT 0           -- Streak to track consecutive days active
+);
+
+CREATE TABLE community_posts (
+    post_id SERIAL PRIMARY KEY,
+    id INT REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE levels (
+    level_id INT AUTO_INCREMENT PRIMARY KEY,
+    level_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    min_points INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE points_log (
+    log_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    points_earned INT,
+    reason VARCHAR(255),
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Insert initial levels
+INSERT INTO levels (level_name, description, min_points) VALUES 
+('Beginner', 'New learner', 0),
+('Intermediate', 'Getting the hang of it', 100),
+('Advanced', 'Mastering the concepts', 500),
+('Expert', 'Highly skilled in coding', 1000);
+
+-- Trigger to automatically update user level based on points
+DROP TRIGGER IF EXISTS update_user_level;
+
+DELIMITER //
+CREATE TRIGGER update_user_level 
+BEFORE UPDATE ON users
+FOR EACH ROW
+BEGIN
+    DECLARE new_level INT;
+
+    -- Get the level based on the new points
+    SELECT level_id INTO new_level
+    FROM levels
+    WHERE NEW.points >= min_points 
+    ORDER BY min_points DESC
+    LIMIT 1;
+
+    -- Set the new level directly without updating the users table
+    SET NEW.level = new_level;
+END;
+//
+DELIMITER ;
+
+
+CREATE TABLE languages (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE -- Example: 'C#', 'PHP', etc.
+);
+
+-- Create `questions` table to store quiz questions
+CREATE TABLE questions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  question TEXT NOT NULL,
+  option_1 VARCHAR(255) NOT NULL,
+  option_2 VARCHAR(255) NOT NULL,
+  option_3 VARCHAR(255) NOT NULL,
+  option_4 VARCHAR(255) NOT NULL,
+  answer VARCHAR(255) NOT NULL,
+  difficulty ENUM('easy', 'medium', 'hard') NOT NULL,
+  language_id INT, -- Reference to the language table (optional)
+  FOREIGN KEY (language_id) REFERENCES languages(id) -- Link to the language table
+);
+
+INSERT INTO languages (name) 
+VALUES 
+    ('Java'), 
+    ('Python'), 
+    ('C#'), 
+    ('SQL');
+
+-- Inserting Java questions for easy difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What is the default value of a boolean variable in Java?', 'true', 'false', 'null', '0', 'false', 'easy', (SELECT id FROM languages WHERE name = 'Java')),
+    ('Which of the following is used to declare a constant in Java?', 'final', 'constant', 'const', 'static', 'final', 'easy', (SELECT id FROM languages WHERE name = 'Java')),
+    ('Which of these is the correct syntax for a single-line comment in Java?', '// comment', '# comment', '/ comment', '/* comment */', '// comment', 'easy', (SELECT id FROM languages WHERE name = 'Java'));
+
+-- Inserting Java questions for medium difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What is the return type of the `main` method in Java?', 'void', 'int', 'String', 'boolean', 'void', 'medium', (SELECT id FROM languages WHERE name = 'Java')),
+    ('Which of these classes can be used for reading from a file in Java?', 'FileInputStream', 'FileReader', 'BufferedReader', 'All of the above', 'All of the above', 'medium', (SELECT id FROM languages WHERE name = 'Java')),
+    ('What will the following code print? System.out.println(10 / 3);', '3', '3.333', 'Error', 'None of the above', '3', 'medium', (SELECT id FROM languages WHERE name = 'Java'));
+
+-- Inserting Java questions for hard difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('Which method is used to create a thread in Java?', 'start()', 'execute()', 'run()', 'init()', 'start()', 'hard', (SELECT id FROM languages WHERE name = 'Java')),
+    ('What is the purpose of the `volatile` keyword in Java?', 'To declare a constant variable', 'To prevent multiple threads from modifying the same variable', 'To optimize the performance of threads', 'None of the above', 'To prevent multiple threads from modifying the same variable', 'hard', (SELECT id FROM languages WHERE name = 'Java')),
+    ('Which collection class in Java is synchronized?', 'ArrayList', 'HashSet', 'LinkedList', 'Vector', 'Vector', 'hard', (SELECT id FROM languages WHERE name = 'Java'));
+
+-- Inserting Python questions for easy difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What is the correct way to define a function in Python?', 'def my_function()', 'function my_function()', 'create my_function()', 'my_function()', 'def my_function()', 'easy', (SELECT id FROM languages WHERE name = 'Python')),
+    ('Which of the following is a mutable data type in Python?', 'String', 'List', 'Tuple', 'Integer', 'List', 'easy', (SELECT id FROM languages WHERE name = 'Python')),
+    ('What does the `len()` function do in Python?', 'Calculates the length of a list or string', 'Calculates the square of a number', 'Finds the maximum value in a list', 'None of the above', 'Calculates the length of a list or string', 'easy', (SELECT id FROM languages WHERE name = 'Python'));
+
+-- Inserting Python questions for medium difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('Which of these is the correct way to create a list in Python?', '[1, 2, 3]', '(1, 2, 3)', 'list(1, 2, 3)', 'list[1, 2, 3]', '[1, 2, 3]', 'medium', (SELECT id FROM languages WHERE name = 'Python')),
+    ('What will the following code output? print(type("Hello"))', '<class "str">', '<type "str">', 'str', 'None of the above', '<class "str">', 'medium', (SELECT id FROM languages WHERE name = 'Python')),
+    ('What is the difference between `is` and `==` in Python?', 'No difference', '`is` checks for object identity, `==` checks for value equality', '`is` checks for value equality, `==` checks for object identity', 'None of the above', '`is` checks for object identity, `==` checks for value equality', 'medium', (SELECT id FROM languages WHERE name = 'Python'));
+
+-- Inserting Python questions for hard difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('Which Python module can be used to work with regular expressions?', 're', 'regex', 'rege', 'regexlib', 're', 'hard', (SELECT id FROM languages WHERE name = 'Python')),
+    ('What is the purpose of the `__init__` method in Python?', 'To initialize the object properties', 'To define the class', 'To execute code outside of the class', 'To initialize the class', 'To initialize the object properties', 'hard', (SELECT id FROM languages WHERE name = 'Python')),
+    ('What does the `yield` keyword do in Python?', 'Returns the value from a function', 'Generates a sequence of values in a generator function', 'Ends the function execution', 'None of the above', 'Generates a sequence of values in a generator function', 'hard', (SELECT id FROM languages WHERE name = 'Python'));
+
+
+-- Inserting C# questions for easy difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What keyword is used to declare a variable in C#?', 'let', 'var', 'dim', 'int', 'var', 'easy', (SELECT id FROM languages WHERE name = 'C#')),
+    ('Which symbol is used for single-line comments in C#?', '#', '//', '/*', '--', '//', 'easy', (SELECT id FROM languages WHERE name = 'C#')),
+    ('Which of the following is a value type in C#?', 'string', 'int', 'List', 'Object', 'int', 'easy', (SELECT id FROM languages WHERE name = 'C#'));
+
+-- Inserting C# questions for medium difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What is the default value of an uninitialized reference type variable in C#?', 'null', '0', 'false', 'undefined', 'null', 'medium', (SELECT id FROM languages WHERE name = 'C#')),
+    ('What type of loop is best for iterating through a collection in C#?', 'for', 'while', 'foreach', 'do-while', 'foreach', 'medium', (SELECT id FROM languages WHERE name = 'C#')),
+    ('What does `async` mean in C#?', 'The method runs synchronously', 'The method runs asynchronously', 'The method runs in parallel', 'The method runs in a thread pool', 'The method runs asynchronously', 'medium', (SELECT id FROM languages WHERE name = 'C#'));
+
+-- Inserting C# questions for hard difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What is the purpose of the `lock` keyword in C#?', 'To encrypt data', 'To make a method thread-safe', 'To block a thread', 'To monitor thread execution', 'To make a method thread-safe', 'hard', (SELECT id FROM languages WHERE name = 'C#')),
+    ('What is the difference between `Task` and `Thread` in C#?', '`Task` is more flexible and lighter', '`Thread` is a newer concept', '`Task` is used for async programming', 'None of the above', '`Task` is more flexible and lighter', 'hard', (SELECT id FROM languages WHERE name = 'C#')),
+    ('What is the result of the following code in C#: int x = 2; Console.WriteLine(x++);', '2', '3', 'Error', 'None of the above', '2', 'hard', (SELECT id FROM languages WHERE name = 'C#'));
+
+-- Inserting SQL questions for easy difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What SQL keyword is used to retrieve data from a database?', 'SELECT', 'GET', 'FETCH', 'RETRIEVE', 'SELECT', 'easy', (SELECT id FROM languages WHERE name = 'SQL')),
+    ('Which SQL statement is used to insert new data into a table?', 'INSERT INTO', 'INSERT', 'ADD', 'CREATE', 'INSERT INTO', 'easy', (SELECT id FROM languages WHERE name = 'SQL')),
+    ('Which SQL clause is used to filter the results?', 'WHERE', 'FILTER', 'CONDITIONS', 'IF', 'WHERE', 'easy', (SELECT id FROM languages WHERE name = 'SQL'));
+
+-- Inserting SQL questions for medium difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What does the SQL `JOIN` keyword do?', 'Combines data from multiple tables', 'Filters data from one table', 'Calculates sum of data', 'None of the above', 'Combines data from multiple tables', 'medium', (SELECT id FROM languages WHERE name = 'SQL')),
+    ('Which SQL function is used to find the highest value in a column?', 'MAX()', 'MIN()', 'COUNT()', 'SUM()', 'MAX()', 'medium', (SELECT id FROM languages WHERE name = 'SQL')),
+    ('What does the SQL `GROUP BY` clause do?', 'Groups rows that have the same values into summary rows', 'Orders the rows in ascending order', 'Sorts the rows by date', 'None of the above', 'Groups rows that have the same values into summary rows', 'medium', (SELECT id FROM languages WHERE name = 'SQL'));
+
+-- Inserting SQL questions for hard difficulty
+INSERT INTO questions (question, option_1, option_2, option_3, option_4, answer, difficulty, language_id)
+VALUES 
+    ('What is the purpose of the `HAVING` clause in SQL?', 'Filters records before grouping', 'Filters records after grouping', 'Joins multiple tables', 'Sorts the records', 'Filters records after grouping', 'hard', (SELECT id FROM languages WHERE name = 'SQL')),
+    ('Which command is used to remove all rows from a table without deleting the table itself?', 'DELETE', 'DROP', 'TRUNCATE', 'REMOVE', 'TRUNCATE', 'hard', (SELECT id FROM languages WHERE name = 'SQL')),
+    ('What type of join returns all records when there is a match in either left or right table?', 'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN', 'FULL OUTER JOIN', 'hard', (SELECT id FROM languages WHERE name = 'SQL'));
+
