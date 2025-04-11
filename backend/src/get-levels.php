@@ -1,5 +1,5 @@
 <?php
-require 'database.php'; // this should contain your $conn = new mysqli(...) setup
+require 'database.php';
 
 header('Content-Type: application/json');
 
