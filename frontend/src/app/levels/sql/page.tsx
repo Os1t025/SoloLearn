@@ -5,51 +5,91 @@ export default function SqlQuiz() {
   const [level, setLevel] = useState<"easy" | "medium" | "hard" | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
-  const [questions, setQuestions] = useState<any[]>([]); // Store fetched questions
-  const [loading, setLoading] = useState(true); // Loading state
+  const [questions, setQuestions] = useState<any[]>([]); 
+  const [loading, setLoading] = useState(true); 
 
   const startQuiz = (difficulty: "easy" | "medium" | "hard") => {
     setLevel(difficulty);
     setCurrentQuestion(0);
     setScore(0);
-    setLoading(true); // Set loading to true when starting the quiz
+    setLoading(true); 
   };
 
   // Fetch questions from the backend based on the selected difficulty level
   useEffect(() => {
     if (level) {
-      setLoading(true); // Set loading to true when starting to fetch
+      setLoading(true); 
       fetch(`http://localhost:8000/get-questions-sql.php?level=${level}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.error) {
             alert(data.error);
           } else {
-            setQuestions(data); // Set the fetched questions
+            setQuestions(data); 
           }
         })
         .catch((error) => {
           console.error("Error fetching questions:", error);
         })
         .finally(() => {
-          setLoading(false); // Set loading to false once the fetch is complete
+          setLoading(false); 
         });
     }
-  }, [level]); // Run the effect whenever `level` changes
+  }, [level]); 
+
+  // Function to get points based on difficulty level
+  const getPointsForLevel = (level: "easy" | "medium" | "hard") => {
+    switch (level) {
+      case "easy":
+        return 10;
+      case "medium":
+        return 20;
+      case "hard":
+        return 50;
+      default:
+        return 0;
+    }
+  };
 
   // Function to handle the answer selection
   const handleAnswer = (answer: string) => {
+    const pointsForLevel = getPointsForLevel(level!); 
+
     if (questions[currentQuestion]?.answer === answer) {
-      setScore(score + 10); // Increment score for correct answer
+      setScore(score + pointsForLevel); 
     }
 
     if (currentQuestion + 1 < questions.length) {
-      setCurrentQuestion(currentQuestion + 1); // Move to the next question
+      setCurrentQuestion(currentQuestion + 1); 
     } else {
-      alert(`Quiz Completed! 🎉 Your Score: ${score + 10}`);
-      setLevel(null); // Reset quiz after completion
-      setCurrentQuestion(0); // Reset current question index
-      setScore(0); // Reset score
+      const finalScore = score + (questions[currentQuestion]?.answer === answer ? pointsForLevel : 0);
+
+      const userId = localStorage.getItem("user_id"); 
+
+      fetch("http://localhost:8000/update-points.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          points: finalScore,
+          reason: `SQL Quiz - ${level} level`,
+        }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert(`Quiz Completed! 🎉 Your Score: ${finalScore}\n${data.message}`);
+          localStorage.setItem("xp", (parseInt(localStorage.getItem("xp") || "0") + finalScore).toString());
+        })
+        .catch((err) => {
+          console.error("Failed to submit score:", err);
+          alert(`Quiz Completed! 🎉 Your Score: ${finalScore} (but couldn't save to server)`);
+        });
+
+      setLevel(null); 
+      setCurrentQuestion(0); 
+      setScore(0); 
     }
   };
 
@@ -66,7 +106,7 @@ export default function SqlQuiz() {
       ) : (
         <>
           {loading ? (
-            <p>Loading questions...</p> // Display a loading message while questions are being fetched
+            <p>Loading questions...</p> 
           ) : (
             <>
               {/* Ensure the current question exists */}
@@ -80,7 +120,7 @@ export default function SqlQuiz() {
                   ))}
                 </>
               ) : (
-                <p>No questions available.</p> // Fallback if no questions exist
+                <p>No questions available.</p> 
               )}
             </>
           )}
@@ -89,3 +129,4 @@ export default function SqlQuiz() {
     </div>
   );
 }
+
