@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "Ositopop#23"; // Change as needed
+$password = "yourpassword"; // Change as needed
 $dbname = "SoloLearn";
 
 $conn = new mysqli($host, $user, $password, $dbname);
