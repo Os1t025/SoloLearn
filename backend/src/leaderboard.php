@@ -1,31 +1,33 @@
 <?php
-require 'database.php';
-/**
- *  Leaderboard
- * - Displays top users ranked by their points.
- * - Can be filtered by time (daily, weekly, all-time) or category.
- * - Useful for fostering competition, recognition, and motivation among users.
- */
-$sql = "
-    SELECT u.username, u.points, l.level_name
-    FROM users u
-    LEFT JOIN levels l ON u.level_id = l.level_id
-    ORDER BY u.points DESC
-    LIMIT 10
-";
+header('Access-Control-Allow-Origin: *');
+header('Content-Type: application/json');
+include('database.php');
 
-$result = $conn->query($sql);
+try {
+    $sql = "SELECT username, points, level FROM users ORDER BY points DESC";
+    $result = $conn->query($sql);
 
-$leaderboard = [];
+    $leaderboard = [];
+    $rank = 1;
 
-while ($row = $result->fetch_assoc()) {
-    $leaderboard[] = [
-        'username' => $row['username'],
-        'points' => $row['points'],
-        'level' => $row['level_name']
-    ];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $leaderboard[] = [
+                'rank' => $rank++,
+                'username' => $row['username'],
+                'points' => (int)$row['points'],
+                'level' => $row['level']
+            ];
+        }
+    }
+
+    echo json_encode($leaderboard);
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]);
 }
 
-header('Content-Type: application/json');
-echo json_encode($leaderboard);
-?>
+
+
+
+
+
