@@ -1,122 +1,124 @@
 "use client";
-
-import Head from 'next/head';
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import './profile.css';
 
 interface UserProfile {
+  id: number;
   username: string;
   email: string;
-  avatarUrl: string;
+  points: number;
+  level: number;
+  role: string;
+  streak: number;
 }
 
-const Profile: React.FC = () => {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isEditingUsername, setIsEditingUsername] = useState(false);
-  const [newUsername, setNewUsername] = useState('');
-  const [avatarOptions, setAvatarOptions] = useState<string[]>([
-    '/avatars/Builder.png',
-    '/avatars/Chef.png',
-    '/avatars/Businessman.png',
-  ]);
+export default function Profile() {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      const profile: UserProfile = {
-        username: 'JohnDoe',
-        email: 'john.doe@example.com',
-        avatarUrl: '/avatars/Generic.avif',
-      };
-      setUserProfile(profile);
-      setNewUsername(profile.username);
+    const fetchUserData = async () => {
+      const userId = localStorage.getItem("user_id");
+      if (!userId) {
+        setError("User not authenticated");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:8000/get-profile.php", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+
+        const data = await res.json();
+        setUser(data.user);
+      } catch (err: any) {
+        setError(err.message);
+      }
     };
 
-    fetchUserProfile();
+    fetchUserData();
   }, []);
 
-  const handleEditUsername = () => {
-    setIsEditingUsername(true);
-  };
+  if (error) return <p style={{ color: "red" }}>Error: {error}</p>;
 
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewUsername(event.target.value);
-  };
-
-  const handleUsernameSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (userProfile) {
-      setUserProfile({ ...userProfile, username: newUsername });
-    }
-    setIsEditingUsername(false);
-  };
-
-  const handleAvatarChange = (avatarUrl: string) => {
-    if (userProfile) {
-      setUserProfile({ ...userProfile, avatarUrl });
-    }
-  };
-
-  if (!userProfile) {
-    return <div className="text-center mt-5">Loading...</div>;
-  }
+  const levelProgress = (user?.points || 0) % 100;
+  const streakProgress = (user?.streak || 0) * 2;
 
   return (
-    <>
-      <Head>
-        <title>Profile - {userProfile.username}</title>
-        <meta name="description" content={`Profile of ${userProfile.username}`} />
-      </Head>
+    <div className="profile-container">
+      <div className="profile-header">
+        <h1>👤 {user?.username}</h1>
+      </div>
 
-      <main className="flex justify-center items-center pt-12">
+      <div className="profile-card">
+        <div className="profile-image">
+          {/* Placeholder for profile picture */}
+          <img src="/profile.avif" alt="Profile" className="profile-img" />
+        </div>
 
-        <div className="text-center max-w-lg">
-          <img
-              src={userProfile.avatarUrl}
-              alt={`${userProfile.username}'s avatar`}
-              className="rounded-full mx-auto"
-              style={{ width: '200px', height: '200px', objectFit: 'cover' }}
-            />
-          {isEditingUsername ? (
-            <form onSubmit={handleUsernameSubmit} className="mb-4">
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  value={newUsername}
-                  onChange={handleUsernameChange}
-                  className="border rounded p-2 flex-grow"
-                />
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  Save
-                </button>
+        <div className="profile-details">
+          <ul>
+            <li><strong>Email:</strong> {user?.email}</li>
+            <li><strong>Role:</strong> {user?.role}</li>
+            <li><strong>Level:</strong> {user?.level}</li>
+            <li><strong>🔥 Streak:</strong> {user?.streak} days</li>
+            <li><strong>⭐XP:</strong> {user?.points}</li>
+          </ul>
+
+          <div className="progress-bars">
+            {/* XP Progress Bar */}
+            <div className="progress-container">
+              <span>XP Progress</span>
+              <div className="progress-bar">
+                <div
+                  className="progresss"
+                  style={{ width: `${levelProgress}%` }}
+                ></div>
               </div>
-            </form>
-          ) : (
-            <div className="mb-4">
-              <h1 className="text-2xl font-bold">
-                {userProfile.username} <button onClick={handleEditUsername} className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-1 px-2 rounded text-sm">Edit</button>
-              </h1>
             </div>
-          )}
 
-          <p className="text-gray-700">Email: {userProfile.email}</p>
-
-          <div className="flex justify-center mt-6">
-            {avatarOptions.map((avatar, index) => (
-              <img
-                key={index}
-                src={avatar}
-                alt={`Avatar option ${index + 1}`}
-                className="rounded-full mr-2 cursor-pointer"
-                style={{ width: '150px', height: '150px', objectFit: 'cover' }}
-                onClick={() => handleAvatarChange(avatar)}
-              />
-            ))}
+            {/* Streak Progress Bar */}
+            <div className="progress-container">
+              <span>Streak Progress</span>
+              <div className="progress-bar">
+                <div
+                  className="progresss"
+                  style={{ width: `${Math.min(streakProgress, 100)}%` }}
+                ></div>
+              </div>
+            </div>
           </div>
         </div>
-      </main>
-    </>
-  );
-};
+      </div>
 
-export default Profile;
+      {/* Back button at the bottom */}
+      <button onClick={() => router.back()} className="back-btn bottom-btn">
+        Back
+      </button>
+    </div>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
