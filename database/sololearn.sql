@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3307
--- Generation Time: Apr 11, 2025 at 01:19 AM
+-- Generation Time: Apr 13, 2025 at 11:06 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -57,18 +57,44 @@ CREATE TABLE `flashcards` (
   `id` int(11) NOT NULL,
   `question` text NOT NULL,
   `answer` text NOT NULL,
-  `Language` varchar(20) NOT NULL
+  `Language` varchar(20) NOT NULL,
+  `hint` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `flashcards`
 --
 
-INSERT INTO `flashcards` (`id`, `question`, `answer`, `Language`) VALUES
-(1, 'What is the keyword to define a function in Python?\r\n', 'def\r\n', 'python'),
-(2, 'What is the difference between is and == in Python?', '== checks if two values are equal, while is checks if they are the same object in memory.', 'python'),
-(3, 'What is the difference between == and .equals() in Java?', '== checks if two object references point to the same memory location, while .equals() checks if the values inside the objects are the same.\r\n\r\n', 'java'),
-(4, 'What is a nullable type in C#?', 'A nullable type can represent all the values of its underlying type plus null. You define it with a ?, like int?.\r\n\r\n', 'c#');
+INSERT INTO `flashcards` (`id`, `question`, `answer`, `Language`, `hint`) VALUES
+(1, 'What is the keyword to define a function in Python?\r\n', 'def\r\n', 'python', 'It\'s only 3 letters. Starts with \"d\".'),
+(2, 'What is the difference between is and == in Python?', '== checks if two values are equal, while is checks if they are the same object in memory.', 'python', 'One checks equality, one checks identity.'),
+(3, 'What is the difference between == and .equals() in Java?', '== checks if two object references point to the same memory location, while .equals() checks if the values inside the objects are the same.\r\n\r\n', 'java', 'One is for comparing values, one is a method'),
+(4, 'What is a nullable type in C#?', 'A nullable type can represent all the values of its underlying type plus null. You define it with a ?, like int?.\r\n\r\n', 'c#', 'It lets variables hold \"null\" or a value.\r\n'),
+(5, 'Python: What is the output of this code?\n\nx = [i*i for i in range(3)]\nprint(x)', '[0, 1, 4]', 'python', ''),
+(6, 'Java: Which keyword prevents method overriding?\nA) static\nB) final\nC) abstract\nD) private', 'B) final', 'java', ''),
+(7, 'C#: What is the result of the following?\n\nstring s = null;\nConsole.WriteLine(s ?? \"default\");', 'default', 'c#', ''),
+(8, 'Python: What error will this code raise?\n\nx = (1, 2, 3)\nx[0] = 99', 'TypeError: \'tuple\' object does not support item assignment', 'python', ''),
+(9, 'Java: Which of these allows dynamic method dispatch?\nA) Interface\nB) Abstract Class\nC) Inheritance\nD) All of the above', 'D) All of the above', 'java', ''),
+(10, 'C#: Which LINQ method returns the first element that matches a condition?\nA) FirstOrDefault()\nB) Where()\nC) Select()\nD) Take()', 'A) FirstOrDefault()', 'c#', ''),
+(11, 'Python: What\'s the output?\n\nprint(\'Python\'[::-1])', 'nohtyP', 'python', ''),
+(12, 'Java: What will this print?\n\nint[] arr = {1,2,3};\nSystem.out.println(arr.length);', '3', 'java', ''),
+(13, 'C#: In a try-catch-finally block, which block always executes?\nA) try\nB) catch\nC) finally\nD) none', 'C) finally', 'c#', ''),
+(14, 'Python: What symbol is used for list comprehension?', '[] (square brackets)', 'python', ''),
+(15, 'Java: Which of these is not a primitive data type?\nA) int\nB) float\nC) String\nD) boolean', 'C) String', 'java', ''),
+(16, 'C#: What does \'??\' operator do?', 'Returns left operand if not null, else right operand', 'c#', ''),
+(17, 'Python Debugging: What tool lets you step through code line-by-line?', 'pdb (Python Debugger)', 'python', ''),
+(18, 'Java: What will this print?\n\nSystem.out.println(10 % 3);', '1', 'java', ''),
+(19, 'C#: What\'s the result of this?\n\nint? x = null;\nConsole.WriteLine(x ?? 5);', '5', 'c#', ''),
+(20, 'Python: What is the output?\n\nprint(\'Hello\' * 2)', 'HelloHello', 'python', ''),
+(21, 'Java: Which keyword is used to inherit a class?', 'extends', 'java', ''),
+(22, 'C#: Which method converts string to int?\nA) int.Parse()\nB) Convert.ToInt32()\nC) Both A and B\nD) None', 'C) Both A and B', 'c#', ''),
+(23, 'Python: What\'s the output?\n\nx = {\'a\':1, \'b\':2}\nprint(x.get(\'c\', 99))', '99', 'python', ''),
+(24, 'Python: What is the output?\n\nx = 0\nfor i in range(1, 5):\n    x += i*i\nprint(x)', '30', 'python', ''),
+(25, 'Java: What is the output?\n\nint x = 1;\nfor(int i=1; i<=3; i++){\n    x *= i;\n}\nSystem.out.println(x);', '6', 'java', ''),
+(26, 'C#: What will this print?\n\nint a = 1, b = 1;\nfor(int i=0; i<4; i++){\n    int temp = b;\n    b = a + b;\n    a = temp;\n}\nConsole.WriteLine(a);', '3', 'c#', ''),
+(27, 'Python: What is the output?\n\ndef recur(n):\n    if n == 0:\n        return 1\n    return n * recur(n-1)\nprint(recur(3))', '6', 'python', ''),
+(28, 'Java: What is the output?\n\nint sum = 0;\nfor(int i=1; i<=10; i+=2){\n    sum += i;\n}\nSystem.out.println(sum);', '25', 'java', ''),
+(29, 'C#: What is the output?\n\nstring s = \"abc\";\nstring result = \"\";\nforeach(var c in s.Reverse()){\n    result += c;\n}\nConsole.WriteLine(result);', 'cba', 'c#', '');
 
 -- --------------------------------------------------------
 
@@ -269,7 +295,7 @@ ALTER TABLE `courses`
 -- AUTO_INCREMENT for table `flashcards`
 --
 ALTER TABLE `flashcards`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `leaderboard`
