@@ -180,3 +180,37 @@ VALUES
     ('Which command is used to remove all rows from a table without deleting the table itself?', 'DELETE', 'DROP', 'TRUNCATE', 'REMOVE', 'TRUNCATE', 'hard', (SELECT id FROM languages WHERE name = 'SQL')),
     ('What type of join returns all records when there is a match in either left or right table?', 'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN', 'FULL OUTER JOIN', 'hard', (SELECT id FROM languages WHERE name = 'SQL'));
 
+CREATE TABLE badges (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  image_url VARCHAR(255),
+  min_points INT NOT NULL
+);
+
+CREATE TABLE user_badges (
+  user_id INT,
+  badge_id INT,
+  earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, badge_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE
+);
+
+INSERT INTO badges (name, description, image_url, min_points) VALUES
+('First Steps', 'Earn 50 XP', '/badges/badge1.png', 50),
+('Rising Star', 'Earn 100 XP', '/badges/badge2.png', 100),
+('Code Champ', 'Earn 500 XP', '/badges/badge3.png', 500),
+('Legendary Coder', 'Earn 1000 XP', '/badges/badge4.png', 1000),
+('Unstoppable', 'Earn 2000 XP', '/badges/badge5.png', 2000);
+
+
+
+------------------------
+for testing 
+
+UPDATE users
+SET points = points + 2000
+WHERE id = 2;
+
+SELECT * FROM users;
