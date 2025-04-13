@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'sololearn';
+$servername = "localhost";
+$username = "root";
+$password = "yourpassword"; // Change as needed
+$dbname = "SoloLearn";
 
 $conn = new mysqli($host, $user, $password, $dbname);
 

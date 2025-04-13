@@ -1,3 +1,4 @@
+DROP DATABASE IF EXISTS SoloLearn;
 CREATE DATABASE IF NOT EXISTS SoloLearn;
 
 USE SoloLearn;
@@ -6,35 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE user_progress (
-    progress_id INT PRIMARY KEY AUTO_INCREMENT,
-    id INT,
-    lesson_id INT,
-    completed BOOLEAN DEFAULT FALSE,
-    quiz_score INT CHECK (quiz_score BETWEEN 0 AND 100),
-    completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
-);
-
-
-CREATE TABLE courses (
-    course_id INT PRIMARY KEY AUTO_INCREMENT,
-    course_name VARCHAR(255) UNIQUE NOT NULL,
-    description TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE lessons (
-    lesson_id INT PRIMARY KEY AUTO_INCREMENT,
-    course_id INT NOT NULL,  -- Ensure it matches the data type in courses
-    title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
-    video_url VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_course FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
+    password VARCHAR(255) NOT NULL,
+    points INT DEFAULT 0,          -- This will be used as XP (experience points)
+    level INT DEFAULT 1,           -- Level of the user (based on points)
+    role ENUM('User', 'Mentor', 'Leader') DEFAULT 'User',
+    streak INT DEFAULT 0           -- Streak to track consecutive days active
 );
 
 CREATE TABLE community_posts (
@@ -45,16 +22,12 @@ CREATE TABLE community_posts (
 );
 
 CREATE TABLE levels (
-  level_id INT AUTO_INCREMENT PRIMARY KEY,
-  level_name VARCHAR(100) NOT NULL,
-  description TEXT,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    level_id INT AUTO_INCREMENT PRIMARY KEY,
+    level_name VARCHAR(100) NOT NULL,
+    description TEXT,
+    min_points INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-ALTER TABLE users 
-ADD COLUMN points INT DEFAULT 0,
-ADD COLUMN level INT DEFAULT 1,
-ADD COLUMN role ENUM('User', 'Mentor', 'Leader') DEFAULT 'User';
 
 CREATE TABLE points_log (
     log_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -65,23 +38,35 @@ CREATE TABLE points_log (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-ALTER TABLE user_progress ADD COLUMN points_awarded INT DEFAULT 0;
-ALTER TABLE levels ADD COLUMN min_points INT NOT NULL;
-
+-- Insert initial levels
 INSERT INTO levels (level_name, description, min_points) VALUES 
 ('Beginner', 'New learner', 0),
 ('Intermediate', 'Getting the hang of it', 100),
 ('Advanced', 'Mastering the concepts', 500),
 ('Expert', 'Highly skilled in coding', 1000);
 
-CREATE TABLE leaderboard (
-    rank_id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNIQUE,
-    points INT,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
+-- Trigger to automatically update user level based on points
+DROP TRIGGER IF EXISTS update_user_level;
 
+DELIMITER //
+CREATE TRIGGER update_user_level 
+BEFORE UPDATE ON users
+FOR EACH ROW
+BEGIN
+    DECLARE new_level INT;
+
+    -- Get the level based on the new points
+    SELECT level_id INTO new_level
+    FROM levels
+    WHERE NEW.points >= min_points 
+    ORDER BY min_points DESC
+    LIMIT 1;
+
+    -- Set the new level directly without updating the users table
+    SET NEW.level = new_level;
+END;
+//
+DELIMITER ;
 
 
 CREATE TABLE languages (
@@ -195,24 +180,37 @@ VALUES
     ('Which command is used to remove all rows from a table without deleting the table itself?', 'DELETE', 'DROP', 'TRUNCATE', 'REMOVE', 'TRUNCATE', 'hard', (SELECT id FROM languages WHERE name = 'SQL')),
     ('What type of join returns all records when there is a match in either left or right table?', 'INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN', 'FULL OUTER JOIN', 'hard', (SELECT id FROM languages WHERE name = 'SQL'));
 
+CREATE TABLE badges (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  image_url VARCHAR(255),
+  min_points INT NOT NULL
+);
 
-DELIMITER //
-CREATE TRIGGER update_user_level 
-AFTER UPDATE ON users
-FOR EACH ROW
-BEGIN
-    DECLARE new_level INT;
-    
-    SELECT level_id INTO new_level 
-    FROM levels 
-    WHERE NEW.points >= min_points 
-    ORDER BY min_points DESC 
-    LIMIT 1;
-    
-    UPDATE users SET level = new_level WHERE id = NEW.id;
-END;
-//
-DELIMITER ;
+CREATE TABLE user_badges (
+  user_id INT,
+  badge_id INT,
+  earned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, badge_id),
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (badge_id) REFERENCES badges(id) ON DELETE CASCADE
+);
 
+INSERT INTO badges (name, description, image_url, min_points) VALUES
+('First Steps', 'Earn 50 XP', '/badges/badge1.png', 50),
+('Rising Star', 'Earn 100 XP', '/badges/badge2.png', 100),
+('Code Champ', 'Earn 500 XP', '/badges/badge3.png', 500),
+('Legendary Coder', 'Earn 1000 XP', '/badges/badge4.png', 1000),
+('Unstoppable', 'Earn 2000 XP', '/badges/badge5.png', 2000);
+
+
+
+------------------------
+for testing 
+
+UPDATE users
+SET points = points + 2000
+WHERE id = 2;
 
 SELECT * FROM users;
