@@ -12,7 +12,7 @@ if ($conn->connect_error) {
 
 header('Content-Type: application/json');
 
-$sql = "SELECT id, question, answer, Language FROM flashcards";
+$sql = "SELECT id, question, answer, Language, hint FROM flashcards";
 $result = $conn->query($sql);
 
 $flashcards = [];
