@@ -13,8 +13,17 @@ interface UserProfile {
   streak: number;
 }
 
+interface Badge {
+  name: string;
+  description: string;
+  image_url: string;
+}
+
 export default function Profile() {
   const [user, setUser] = useState<UserProfile | null>(null);
+
+  const [badges, setBadges] = useState<Badge[]>([]);
+
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -41,6 +50,9 @@ export default function Profile() {
 
         const data = await res.json();
         setUser(data.user);
+
+        setBadges(data.badges);
+
       } catch (err: any) {
         setError(err.message);
       }
@@ -99,6 +111,21 @@ export default function Profile() {
             </div>
           </div>
         </div>
+              {/* badges */}
+              {badges.length > 0 && (
+        <div className="badges-section">
+          <h2>🏅 Badges Earned</h2>
+          <div className="badges-grid">
+            {badges.map((badge, index) => (
+              <div key={index} className="badge-card">
+                <img src={badge.image_url} alt={badge.name} className="badge-img" />
+                <p><strong>{badge.name}</strong></p>
+                <p className="desc">{badge.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
       </div>
 
       {/* Back button at the bottom */}

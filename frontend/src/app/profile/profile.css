@@ -102,3 +102,33 @@
     border-radius: 5px;
   }
   
+  .badges-section {
+    margin-top: 30px;
+  }
+  
+  .badges-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  
+  .badge-card {
+    width: 120px;
+    text-align: center;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+  
+  .badge-img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+  
+  .badge-card .desc {
+    font-size: 12px;
+    color: #555;
+  }
+  
