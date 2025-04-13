@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once 'database.php';
+require_once 'award_badges.php';
 
 $rawData = file_get_contents("php://input");
 $data = json_decode($rawData, true);
@@ -35,6 +36,7 @@ if ($result && $result->num_rows === 1) {
     $user = $result->fetch_assoc();
 
     if (password_verify($password, $user['password'])) {
+
         $updateStreak = $conn->prepare("UPDATE users SET streak = streak + 1 WHERE id = ?");
         $updateStreak->bind_param("i", $user['id']);
         $updateStreak->execute();
@@ -46,6 +48,8 @@ if ($result && $result->num_rows === 1) {
         $updatedResult = $refreshUser->get_result();
         $updatedData = $updatedResult->fetch_assoc();
         $refreshUser->close();
+
+        awardBadges($conn, $user['id']);
 
         $_SESSION['username'] = $user['username'];
         $_SESSION['user_id'] = $user['id'];
@@ -72,6 +76,7 @@ if ($result && $result->num_rows === 1) {
 
 $stmt->close();
 $conn->close();
+
 
 
 
