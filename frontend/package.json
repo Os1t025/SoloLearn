@@ -2,7 +2,7 @@
   "name": "solo-learn",
   "version": "0.1.0",
   "private": true,
-    "scripts": {
+  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -14,7 +14,8 @@
     "framer-motion": "^12.5.0",
     "next": "15.2.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -22,10 +23,10 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "concurrently": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "13.2.1",
     "tailwindcss": "^4.0.14",
-    "typescript": "^5",
-    "concurrently": "^8.0.0"
+    "typescript": "^5"
   }
 }
