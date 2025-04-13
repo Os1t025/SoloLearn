@@ -28,8 +28,8 @@ const CommunityPage: React.FC = () => {
 
     if (code && !accessToken) {
       const fetchToken = async () => {
-        const clientId = "pmXaP8K5dBAPyFwnRPsRiQ";
-        const secret = "2hX2eRWy3s0zVfVTCYyHAdDPaTwQRg";
+        const clientId = "rG8CSb-FyKSlSMTU4kiQGA";
+        const secret = "A_invWWzJ1SGnJly8vSA8Ue9wU64ng";
         const credentials = btoa(`${clientId}:${secret}`);
 
         try {
@@ -106,7 +106,7 @@ const CommunityPage: React.FC = () => {
   };
 
   const loginWithReddit = () => {
-    const clientId = "pmXaP8K5dBAPyFwnRPsRiQ";
+    const clientId = "rG8CSb-FyKSlSMTU4kiQGA";
     const redirectUri = "http://localhost:3000/community";
     const authUrl = `https://www.reddit.com/api/v1/authorize?client_id=${clientId}&response_type=code&state=xyz123&redirect_uri=${redirectUri}&duration=temporary&scope=read`;
 
