@@ -20,6 +20,20 @@ Follow these steps to run the project locally.
 
 ### 1. Clone the Repository
 
+
+
+### 2. Install Next.js
+
+
+
+### 3. Configure Your Backend
+
+
+### 4. Start the Fullstack App
+
+
+
+
 ```bash
 git clone <your-repo-url>
 2. Install Next.js
