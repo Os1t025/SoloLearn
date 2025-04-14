@@ -2,13 +2,13 @@
 header('Content-Type: application/json');
 header("Access-Control-Allow-Origin: *");
 
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'sololearn';
+$servername = "localhost";
+$username = "root";
+$password = "yourpassword"; // Change as needed 
+$dbname = "SoloLearn"; // Ensure this matches your database name
 
 try {
-    $conn = new mysqli($host, $user, $password, $dbname);
+    $conn = new mysqli($servername, $username, $password, $dbname);
     
     if ($conn->connect_error) {
         throw new Exception('Connection failed: ' . $conn->connect_error);
