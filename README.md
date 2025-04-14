@@ -19,59 +19,26 @@ Welcome to **SoloLearn** — a web application inspired by Duolingo, but designe
 Follow these steps to run the project locally.
 
 ### 1. Clone the Repository
-
-
-
+```bash
+git clone <your-repo-url>
+```
 ### 2. Install Next.js
+```bash
+You’ll need to have Next.js installed. If it’s not installed yet, run:
 
+npm install next
+```
 
 
 ### 3. Configure Your Backend
-
-
-### 4. Start the Fullstack App
-
-
-
-
-```bash
-git clone <your-repo-url>
-2. Install Next.js
-You’ll need to have Next.js installed. If it’s not installed yet, run:
-
-bash
-Copy
-Edit
-npm install next
-Or, to install all project dependencies:
-
-bash
-Copy
-Edit
-npm install
-3. Configure Your Backend
-Update your database credentials in the following files:
-
 backend/database.php
-
 backend/get-flashcards.php
 
-Make sure the username, password, and database name match your local or remote setup.
-
-4. Start the Fullstack App
-Navigate to the frontend directory:
-
-bash
-Copy
-Edit
+### 4. Start the Fullstack App
+```bash
 cd frontend
-Then start the fullstack development server:
-
-bash
-Copy
-Edit
 npm run dev:fullstack
-The app should now be running at http://localhost:3000
+```
 
 📁 Project Structure
 csharp
