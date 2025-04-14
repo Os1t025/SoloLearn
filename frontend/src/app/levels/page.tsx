@@ -72,6 +72,9 @@ export default function Levels() {
         Profile
       </motion.button>
 
+      <motion.button className="btn profile-btn" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }} onClick={() => router.push("/flashcards")}>
+        Flashcards
+      </motion.button>
       </div>
 
       {/* Floating Sign-Out Button */}
