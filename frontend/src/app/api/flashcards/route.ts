@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     // Adjust this URL to match your PHP endpoint
-    const phpEndpoint = "http://localhost/SoloLearn/backend/src/get-flashcards.php";
+    const phpEndpoint = "http://localhost:8000/get-flashcards.php";
     
     const res = await fetch(phpEndpoint);
     
