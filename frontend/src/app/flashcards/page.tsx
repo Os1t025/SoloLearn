@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface Flashcard {
   id: string;
@@ -18,6 +19,7 @@ export default function FlashcardsPage() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchFlashcards = async () => {
@@ -135,6 +137,13 @@ export default function FlashcardsPage() {
 
   return (
     <div className="container">
+
+
+      {/* Back Button */}
+      <button className="back-button" onClick={() => router.push("/levels")}>
+        ← Back to Levels
+      </button>
+
       <div className="card">
         <div className={`lang ${flashcards[currentIndex].Language.toLowerCase()}`}>
           {flashcards[currentIndex].Language}
