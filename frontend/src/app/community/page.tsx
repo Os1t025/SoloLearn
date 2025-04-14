@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { FaPlusCircle } from "react-icons/fa";
+import "./community.css";
 
 interface RedditPost {
   id: string;
@@ -119,41 +120,28 @@ const CommunityPage: React.FC = () => {
   );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
+    <div className="community-container">
+      <div className="back-button-wrapper">
+        <button className="back-button" onClick={() => router.push("/levels")}>
+          ← Back to Levels
+        </button>
+      </div>
+
+      <div className="community-header">
         <h2>Community Posts</h2>
         {accessToken ? (
-          <button
-            onClick={handleAddPost}
-            style={{
-              background: "lightblue",
-              border: "none",
-              padding: "10px",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
+          <button className="community-button" onClick={handleAddPost}>
             <FaPlusCircle /> Add Post
           </button>
         ) : (
-          <button
-            onClick={loginWithReddit}
-            style={{
-              background: "orangered",
-              color: "white",
-              border: "none",
-              padding: "10px 15px",
-              borderRadius: "5px",
-              cursor: "pointer",
-            }}
-          >
+          <button className="community-button login-button" onClick={loginWithReddit}>
             Log in with Reddit
           </button>
         )}
       </div>
 
       {displayedPosts.map((post) => (
-        <div key={post.id} style={{ border: "1px solid #ddd", padding: "10px", marginBottom: "10px" }}>
+        <div key={post.id} className="post-card">
           <h3>{post.title}</h3>
           <p>Author: {post.author.name}</p>
           <p>{post.selftext}</p>
@@ -164,10 +152,14 @@ const CommunityPage: React.FC = () => {
       ))}
 
       {posts.length > (currentPage + 1) * postsPerPage && (
-        <button onClick={handleNextPage}>Next Page</button>
+        <button className="pagination-button" onClick={handleNextPage}>
+          Next Page
+        </button>
       )}
     </div>
   );
 };
 
 export default CommunityPage;
+
+
