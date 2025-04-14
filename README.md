@@ -29,8 +29,8 @@ npm install next
 ```
 
 ### 3. Configure Your Backend
-- 🎯 Interactive coding quizzes that award points  
-- 🏆 Leaderboards to track top learners
+-  backend/database.php 
+-  backend/get-flashcards.php
 
 ### 4. Start the Fullstack App
 ```bash
