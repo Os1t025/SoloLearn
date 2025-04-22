@@ -35,8 +35,7 @@ brew install php
 
 Windows:
 Download PHP from php.net/downloads
-
-
+```
 ✅ Don't forget to configure your php.ini file:
 Note: PHP may include multiple php.ini templates (e.g., php.ini-development and php.ini-production). Make sure to rename one of them .ini and start to edit.
 
