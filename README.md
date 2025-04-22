@@ -26,7 +26,7 @@ git clone https://github.com/Os1t025/SoloLearn.git
 Make sure PHP is installed on your system. You can check with:
 ```bash
 php -v
-
+```
 If it’s not installed, use one of the following based on your OS:
 
 macOS (Homebrew):
