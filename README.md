@@ -20,7 +20,7 @@ Follow these steps to run the project locally.
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Os1t025/SoloLearn.git
 ```
 ### 2. Install Next.js
 You’ll need to have Next.js installed. If it’s not installed yet, run:
