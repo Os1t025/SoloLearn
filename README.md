@@ -62,7 +62,7 @@ cd frontend
 npm install
 ```
 ### 4. Set Up the Database
-Run the SQL script inside script.txt to create your database and tables:
+Run the SQL script, script.txt, in the script folder to create your database and tables:
 
 ### 5. Configure Your Backend
 Make sure your backend files are properly connected to the database:
