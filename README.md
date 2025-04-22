@@ -39,18 +39,18 @@ Download PHP from php.net/downloads
 ✅ Don't forget to configure your php.ini file:
 Note: PHP may include multiple php.ini templates (e.g., php.ini-development and php.ini-production). Make sure to rename one of them .ini and start to edit.
 
--Open your php.ini file.
--Enable the mysqli extension:
+- Open your php.ini file.
+- Enable the mysqli extension:
 Find this line:
 ;extension=mysqli
 Remove the semicolon so it becomes:
 extension=mysqli
 
--Set the correct path for your PHP extensions:
+- Set the correct path for your PHP extensions:
 Find this line:
 ;extension_dir = "ext"
 Uncomment and update it if necessary.
-```
+
 ### 3. Install Next.js
 You’ll need to have Next.js installed. If it’s not installed yet, run:
 ```bash
