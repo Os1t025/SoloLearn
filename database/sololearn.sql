@@ -358,9 +358,69 @@ ALTER TABLE `points_log`
 --
 -- Constraints for table `user_progress`
 --
-ALTER TABLE `user_progress`
+  //Find the average quiz score for each user
+  ALTER TABLE `user_progress`
   ADD CONSTRAINT `user_progress_ibfk_1` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
+
+  SELECT 
+    id AS user_id, 
+    AVG(quiz_score) AS average_score
+FROM 
+    user_progress
+GROUP BY 
+    id;
+
+  //List all users along with their current points and rank from the leaderboard table.
+SELECT 
+    users.username, 
+    leaderboard.points, 
+    leaderboard.rank_id
+FROM 
+    users
+JOIN 
+    leaderboard ON users.id = leaderboard.user_id
+ORDER BY 
+    leaderboard.points DESC;
+
+
+  //Shows the total points a user has earned (from the points_log table).
+  SELECT
+    u.username,
+    SUM(pl.points_earned) AS total_points
+FROM
+    users u
+JOIN
+    points_log pl ON u.id = pl.user_id
+GROUP BY
+    u.id, u.username;
+
+  //Show the leaderboard, including username, points, and rank.
+  SELECT
+    u.username,
+    l.points,
+    l.rank_id
+FROM
+    leaderboard l
+JOIN
+    users u ON l.user_id = u.id
+ORDER BY
+    l.points DESC;
+
+  //Show each user's progress, lesson title, and quiz score.
+SELECT
+    u.username,
+    le.title AS lesson_title,
+    up.quiz_score,
+    up.completed_at
+FROM
+    user_progress up
+JOIN
+    users u ON up.id = u.id
+JOIN
+    lessons le ON up.lesson_id = le.lesson_id
+ORDER BY
+    u.username, up.completed_at DESC;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
